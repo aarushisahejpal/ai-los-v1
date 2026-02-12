@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Environment variables
+.env
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation (not needed in container)
+README.md
+QUICKSTART.md
+PROJECT_SUMMARY.md
+NEXT_STEPS.md
+INSTALLATION.md
+sample_syllabus.txt
+setup.py
+run.sh
+
+# PRD files
+*.pdf
+*.pptx
+*.heic
+*.jpg
+~$*
