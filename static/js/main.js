@@ -42,9 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function setupEventListeners() {
     // Upload area interactions
-    browseBtn.addEventListener('click', () => fileInput.click());
+    browseBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent event bubbling to upload area
+        fileInput.click();
+    });
     fileInput.addEventListener('change', handleFileSelect);
-    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('click', (e) => {
+        // Only trigger if clicking on the upload area itself, not the button
+        if (e.target === uploadArea || e.target.closest('.upload-icon, .upload-text, .upload-subtext')) {
+            fileInput.click();
+        }
+    });
     
     // Drag and drop
     uploadArea.addEventListener('dragover', handleDragOver);
