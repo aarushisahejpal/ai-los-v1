@@ -1,0 +1,62 @@
+Business Analytics Course Syllabus
+
+Course Title: Introduction to Business Analytics
+Instructor: Dr. Jane Smith
+Semester: Spring 2026
+
+Course Description:
+This course provides an introduction to business analytics, covering data-driven decision making, statistical analysis, and predictive modeling techniques used in modern business environments.
+
+Learning Outcomes:
+By the end of this course, students will be able to:
+
+1. Analyze business data using statistical methods to identify patterns and trends
+2. Apply data visualization techniques to communicate insights effectively to stakeholders
+3. Evaluate the quality and reliability of data sources for business decision-making
+4. Design and implement predictive models to forecast business outcomes
+5. Interpret analytical results and translate them into actionable business recommendations
+6. Utilize industry-standard analytics software and tools for data analysis
+7. Recognize ethical considerations in data collection, analysis, and reporting
+
+Course Objectives:
+- Develop critical thinking skills for data-driven problem solving
+- Understand the role of analytics in strategic business planning
+- Build proficiency in statistical analysis and data interpretation
+- Create professional analytical reports and presentations
+
+Assessment Methods:
+
+1. Midterm Examination (25%)
+   - Covers statistical analysis and data visualization concepts
+   - Format: Multiple choice, short answer, and practical problems
+   
+2. Final Project (30%)
+   - Team-based analytics project using real business data
+   - Includes data analysis, modeling, and presentation components
+   - Deliverables: Written report and oral presentation
+
+3. Weekly Assignments (25%)
+   - Individual homework assignments applying course concepts
+   - Mix of theoretical and practical problems
+   
+4. Case Study Analysis (15%)
+   - Two case studies analyzing real-world business analytics applications
+   - Individual written submissions
+
+5. Class Participation (5%)
+   - Active engagement in class discussions
+   - Contribution to group activities
+
+Required Materials:
+- Textbook: Business Analytics: Data Analysis & Decision Making (7th Edition)
+- Software: Excel, Tableau, R or Python (student versions available)
+
+Course Schedule:
+Week 1-2: Introduction to Business Analytics
+Week 3-4: Data Collection and Preparation
+Week 5-6: Descriptive Statistics and Visualization
+Week 7-8: Probability and Statistical Inference
+Week 9-10: Regression Analysis and Forecasting
+Week 11-12: Predictive Modeling Techniques
+Week 13-14: Advanced Analytics Applications
+Week 15: Final Project Presentations

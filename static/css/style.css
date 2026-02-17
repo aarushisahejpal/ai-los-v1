@@ -554,23 +554,24 @@ h1, h2, h3, h4 {
 /* DEC AI Framework Alignment Explanation */
 .alignment-explanation {
     background: rgba(176, 36, 119, 0.08);
-    padding: 16px;
-    border-radius: 4px;
-    border-left: 3px solid var(--ksb-innovate);
-    margin: 12px 0;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid var(--ksb-innovate);
+    margin: 16px 0;
 }
 
 .alignment-label {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--ksb-innovate);
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
 }
 
 .alignment-explanation p {
     color: var(--text-primary);
-    line-height: 1.6;
+    line-height: 1.7;
     font-size: 14px;
 }
 
@@ -756,50 +757,86 @@ h1, h2, h3, h4 {
 
 /* Assessment Strategy Display */
 .assessment-strategy {
-    background: rgba(237, 25, 58, 0.08);
-    padding: 20px;
+    background: linear-gradient(135deg, rgba(237, 25, 58, 0.06) 0%, rgba(237, 25, 58, 0.12) 100%);
+    padding: 24px;
     border-radius: 8px;
     border-left: 4px solid var(--ksb-red);
-    margin-top: 16px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(237, 25, 58, 0.1);
 }
 
 .assessment-label {
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 700;
     color: #b31429;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .assessment-content {
     color: var(--text-primary);
 }
 
-.assessment-content p {
+.assessment-method {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(237, 25, 58, 0.2);
+}
+
+.assessment-method strong {
+    color: var(--ksb-red);
+    font-size: 14px;
+}
+
+.assessment-description {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(237, 25, 58, 0.2);
+}
+
+.assessment-description strong {
+    color: var(--text-primary);
+    font-size: 14px;
+    display: block;
     margin-bottom: 8px;
 }
 
+.assessment-description p {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
 .rubric-points {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(251, 188, 4, 0.2);
+    background: white;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid rgba(237, 25, 58, 0.2);
 }
 
 .rubric-points strong {
     font-size: 14px;
     color: var(--text-primary);
+    display: block;
+    margin-bottom: 8px;
 }
 
 .rubric-points ul {
-    margin-top: 8px;
+    margin: 0;
     margin-left: 20px;
 }
 
 .rubric-points li {
     font-size: 14px;
     color: var(--text-secondary);
-    margin-bottom: 4px;
+    line-height: 1.7;
+    margin-bottom: 6px;
 }
 
 .ailo-number {

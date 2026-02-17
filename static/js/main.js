@@ -427,15 +427,20 @@ function displayResults(ailos) {
             </div>
             
             <div class="alignment-explanation">
-                <div class="alignment-label">🎯 DEC AI Framework Alignment</div>
+                <div class="alignment-label">🎯 Why & How: DEC AI Framework Alignment</div>
                 <p>${ailo.explanation}</p>
             </div>
             
             <div class="assessment-strategy">
                 <div class="assessment-label">📋 Assessment Strategy</div>
                 <div class="assessment-content">
-                    <p><strong>${ailo.assessment_strategy.method}</strong></p>
-                    <p style="margin-top: 8px;">${ailo.assessment_strategy.description}</p>
+                    <div class="assessment-method">
+                        <strong>Method:</strong> ${ailo.assessment_strategy.method}
+                    </div>
+                    <div class="assessment-description">
+                        <strong>Description:</strong>
+                        <p>${ailo.assessment_strategy.description}</p>
+                    </div>
                     ${rubricHtml}
                 </div>
             </div>

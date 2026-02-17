@@ -206,7 +206,7 @@ def generate_ailos(learning_outcomes, selected_dimensions, ai_influence_percent)
       2. Determine which selected DEC dimension BEST fits
       3. REWRITE it to integrate AI literacy concepts while maintaining the core subject matter
       4. Recommend specific assessment methods to evaluate this AILO
-      5. Explain the transformation and why this dimension was chosen
+      5. Explain WHY and HOW the DEC framework influenced this transformation
     
     Return your response in the following JSON format:
     {{
@@ -220,7 +220,7 @@ def generate_ailos(learning_outcomes, selected_dimensions, ai_influence_percent)
                     "description": "detailed description of how to assess this AILO",
                     "rubric_points": ["key rubric criterion 1", "key rubric criterion 2", "key rubric criterion 3"]
                 }},
-                "explanation": "why this outcome was chosen and how it was enhanced"
+                "explanation": "Explain WHY this DEC dimension was selected for this outcome and HOW it influenced the transformation. Focus on the pedagogical reasoning behind aligning with this specific dimension of the DEC AI Literacy Framework."
             }}
         ]
     }}
