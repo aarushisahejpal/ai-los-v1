@@ -473,7 +473,10 @@ function showSection(section) {
 
 // Export results
 function exportResults() {
-    if (!matchResults) return;
+    if (!ailos || ailos.length === 0) {
+        alert('No results to export. Please generate AILOs first.');
+        return;
+    }
     
     const exportData = {
         filename: uploadedFile ? uploadedFile.name : 'syllabus',
@@ -499,18 +502,27 @@ function exportResults() {
     let textContent = `AI Learning Outcomes Report\n`;
     textContent += `Generated: ${new Date().toLocaleString()}\n`;
     textContent += `Original Syllabus: ${uploadedFile ? uploadedFile.name : 'N/A'}\n`;
+    textContent += `AI Influence: ${aiInfluencePercent}%\n`;
+    textContent += `Selected Dimensions: ${selectedDimensions.join(', ')}\n`;
     textContent += `\n${'='.repeat(80)}\n\n`;
     
-    if (matchResults.matches) {
-        matchResults.matches.forEach((match, index) => {
-            textContent += `${index + 1}. ${match.dec_dimension || 'General AI Literacy'}\n`;
-            textContent += `   Alignment: ${match.alignment_strength || 'Medium'}\n\n`;
-            textContent += `   EXISTING OUTCOME:\n   ${match.existing_outcome}\n\n`;
-            textContent += `   AI-ENHANCED OUTCOME:\n   ${match.suggested_ai_outcome}\n\n`;
-            textContent += `   RECOMMENDATIONS:\n   ${match.feedback}\n\n`;
-            textContent += `${'-'.repeat(80)}\n\n`;
-        });
-    }
+    ailos.forEach((ailo, index) => {
+        textContent += `${index + 1}. ${ailo.dec_dimension}\n`;
+        textContent += `${'='.repeat(80)}\n\n`;
+        textContent += `ORIGINAL LEARNING OUTCOME:\n${ailo.original_outcome}\n\n`;
+        textContent += `AI-ENHANCED LEARNING OUTCOME (AILO):\n${ailo.ailo}\n\n`;
+        textContent += `WHY & HOW - DEC FRAMEWORK ALIGNMENT:\n${ailo.explanation}\n\n`;
+        textContent += `ASSESSMENT STRATEGY:\n`;
+        textContent += `  Method: ${ailo.assessment_strategy.method}\n`;
+        textContent += `  Description: ${ailo.assessment_strategy.description}\n`;
+        if (ailo.assessment_strategy.rubric_points && ailo.assessment_strategy.rubric_points.length > 0) {
+            textContent += `  Rubric Points:\n`;
+            ailo.assessment_strategy.rubric_points.forEach((point, i) => {
+                textContent += `    ${i + 1}. ${point}\n`;
+            });
+        }
+        textContent += `\n${'-'.repeat(80)}\n\n`;
+    });
     
     const textBlob = new Blob([textContent], { type: 'text/plain' });
     const textLink = document.createElement('a');
