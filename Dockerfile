@@ -26,3 +26,4 @@ EXPOSE 8080
 
 # Use gunicorn for production
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
+./deploy-alternative.sh

@@ -208,13 +208,15 @@ def generate_ailos(learning_outcomes, selected_dimensions, ai_influence_percent)
       4. Recommend specific assessment methods to evaluate this AILO
       5. Explain WHY and HOW the DEC framework influenced this transformation
     
+    IMPORTANT: The "original_outcome" field MUST be copied EXACTLY word-for-word from the list above. Do not paraphrase or summarize. Copy the exact text.
+    
     Return your response in the following JSON format:
     {{
         "ailos": [
             {{
-                "original_outcome": "the original learning outcome text",
+                "original_outcome": "COPY THE EXACT ORIGINAL TEXT FROM THE LIST ABOVE - DO NOT CHANGE ANY WORDS",
                 "ailo": "the AI-enhanced learning outcome (AILO)",
-                "dec_dimension": "the DEC dimension used",
+                "dec_dimension": "the DEC dimension used (must be one of: Understanding AI, Using AI, Evaluating AI, AI Ethics and Society, Creating with AI)",
                 "assessment_strategy": {{
                     "method": "specific assessment method (e.g., AI-assisted project, critical evaluation assignment)",
                     "description": "detailed description of how to assess this AILO",

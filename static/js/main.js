@@ -391,15 +391,16 @@ async function generateAilosRequest() {
     }
 }
 
-function displayResults(ailos) {
-    if (!ailos || ailos.length === 0) {
+function displayResults(ailosData) {
+    if (!ailosData || ailosData.length === 0) {
         resultsContainer.innerHTML = '<p>No AILOs generated. Try adjusting your settings.</p>';
         return;
     }
     
-    ailos.forEach((ailo, index) => {
+    ailosData.forEach((ailo, index) => {
         const resultItem = document.createElement('div');
         resultItem.className = 'result-item';
+        resultItem.dataset.index = index;
         
         const rubricHtml = ailo.assessment_strategy && ailo.assessment_strategy.rubric_points && ailo.assessment_strategy.rubric_points.length > 0
             ? `<div class="rubric-points">
@@ -414,6 +415,12 @@ function displayResults(ailos) {
             <div class="result-header">
                 <span class="dimension-badge">${ailo.dec_dimension}</span>
                 <span class="ailo-number">AILO #${index + 1}</span>
+                <button class="delete-ailo-btn" onclick="deleteAilo(${index})" title="Remove this AILO">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
             </div>
             
             <div class="existing-outcome">
@@ -423,7 +430,7 @@ function displayResults(ailos) {
             
             <div class="ai-outcome">
                 <div class="ai-outcome-label">✨ AI Learning Outcome (AILO)</div>
-                <p>${ailo.ailo}</p>
+                <p contenteditable="true" class="editable-ailo" data-index="${index}">${ailo.ailo}</p>
             </div>
             
             <div class="alignment-explanation">
@@ -447,6 +454,52 @@ function displayResults(ailos) {
         `;
         
         resultsContainer.appendChild(resultItem);
+    });
+    
+    // Setup edit listeners after rendering
+    setupEditableAilos();
+}
+
+// Delete individual AILO
+function deleteAilo(index) {
+    if (!ailos || ailos.length === 0) return;
+    
+    if (confirm('Are you sure you want to remove this AILO?')) {
+        // Remove from array
+        ailos.splice(index, 1);
+        
+        // Re-render results
+        resultsContainer.innerHTML = '';
+        displayResults(ailos);
+        
+        // Show message if no AILOs left
+        if (ailos.length === 0) {
+            resultsContainer.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-secondary);">All AILOs removed. Click "Back to Configuration" to generate new ones.</p>';
+        }
+    }
+}
+
+// Handle AILO editing
+function handleAiloEdit(index, newText) {
+    if (!ailos || !ailos[index]) return;
+    ailos[index].ailo = newText;
+}
+
+// Setup event listeners for editable AILOs
+function setupEditableAilos() {
+    const editableElements = document.querySelectorAll('.editable-ailo');
+    editableElements.forEach(el => {
+        el.addEventListener('blur', function() {
+            const index = parseInt(this.dataset.index);
+            handleAiloEdit(index, this.textContent.trim());
+        });
+        
+        el.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.blur();
+            }
+        });
     });
 }
 

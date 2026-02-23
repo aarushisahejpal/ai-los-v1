@@ -426,13 +426,36 @@ h1, h2, h3, h4 {
 }
 
 .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 16px;
+    gap: 12px;
 }
 
 .result-header h4 {
     font-size: 16px;
     color: var(--text-primary);
     margin-bottom: 8px;
+}
+
+.delete-ailo-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-ailo-btn:hover {
+    background: rgba(237, 25, 58, 0.1);
+    border-color: var(--ksb-red);
+    color: var(--ksb-red);
 }
 
 .existing-outcome {
@@ -468,6 +491,23 @@ h1, h2, h3, h4 {
     color: var(--ksb-collaborate);
     text-transform: uppercase;
     margin-bottom: 8px;
+}
+
+.editable-ailo {
+    cursor: text;
+    padding: 4px;
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+}
+
+.editable-ailo:hover {
+    background: rgba(200, 36, 106, 0.1);
+}
+
+.editable-ailo:focus {
+    outline: 2px solid var(--ksb-collaborate);
+    outline-offset: 2px;
+    background: white;
 }
 
 .dec-outcomes {
