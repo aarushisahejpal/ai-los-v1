@@ -8,14 +8,18 @@ to the DEC AI Literacy Framework using Google Gemini AI.
 
 import os
 import json
-from flask import Flask, render_template, request, jsonify, session
+import re
+from flask import Flask, render_template, request, jsonify, session, send_file
 from werkzeug.utils import secure_filename
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 import PyPDF2
 import docx
+from docx.shared import Pt, RGBColor, Inches
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from datetime import datetime
+from io import BytesIO
 
 # Load environment variables
 load_dotenv()
@@ -210,12 +214,17 @@ def generate_ailos(learning_outcomes, selected_dimensions, ai_influence_percent)
     
     IMPORTANT: The "original_outcome" field MUST be copied EXACTLY word-for-word from the list above. Do not paraphrase or summarize. Copy the exact text.
     
+    FORMATTING: In the "ailo" field, wrap any NEW or MODIFIED text in **double asterisks** for bold formatting. For example:
+    - Original: "Analyze financial statements"
+    - AILO: "Analyze financial statements **using AI-powered tools** and **critically evaluate the accuracy of AI-generated insights**"
+    This helps faculty see exactly what changed.
+    
     Return your response in the following JSON format:
     {{
         "ailos": [
             {{
                 "original_outcome": "COPY THE EXACT ORIGINAL TEXT FROM THE LIST ABOVE - DO NOT CHANGE ANY WORDS",
-                "ailo": "the AI-enhanced learning outcome (AILO)",
+                "ailo": "the AI-enhanced learning outcome with **bold formatting** around new/changed text",
                 "dec_dimension": "the DEC dimension used (must be one of: Understanding AI, Using AI, Evaluating AI, AI Ethics and Society, Creating with AI)",
                 "assessment_strategy": {{
                     "method": "specific assessment method (e.g., AI-assisted project, critical evaluation assignment)",
@@ -361,6 +370,133 @@ def generate_ailos_endpoint():
         
     except Exception as e:
         return jsonify({'error': f'Error generating AILOs: {str(e)}'}), 500
+
+
+@app.route('/export-word', methods=['POST'])
+def export_word():
+    """Export AILOs as a formatted Word document"""
+    
+    data = request.json
+    ailos = data.get('ailos', [])
+    filename = data.get('filename', 'syllabus')
+    ai_influence = data.get('ai_influence_percent', 50)
+    selected_dimensions = data.get('selected_dimensions', [])
+    
+    if not ailos:
+        return jsonify({'error': 'No AILOs to export'}), 400
+    
+    try:
+        # Create a new Word document
+        doc = docx.Document()
+        
+        # Add title
+        title = doc.add_heading('AI Learning Outcomes (AILOs) Report', 0)
+        title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        
+        # Add metadata
+        doc.add_paragraph(f'Generated: {datetime.now().strftime("%B %d, %Y at %I:%M %p")}')
+        doc.add_paragraph(f'Original Syllabus: {filename}')
+        doc.add_paragraph(f'AI Influence Level: {ai_influence}%')
+        doc.add_paragraph(f'Selected DEC Dimensions: {", ".join(selected_dimensions)}')
+        doc.add_paragraph()  # Empty line
+        
+        # Add separator
+        doc.add_paragraph('_' * 80)
+        doc.add_paragraph()
+        
+        # Add each AILO
+        for index, ailo in enumerate(ailos, 1):
+            # AILO number and dimension
+            heading = doc.add_heading(f'AILO {index}: {ailo.get("dec_dimension", "N/A")}', level=1)
+            
+            # Original learning outcome
+            doc.add_heading('Original Learning Outcome:', level=2)
+            p = doc.add_paragraph(ailo.get('original_outcome', 'N/A'))
+            p.paragraph_format.left_indent = Inches(0.25)
+            doc.add_paragraph()
+            
+            # AI-Enhanced learning outcome
+            doc.add_heading('✨ AI-Enhanced Learning Outcome (AILO):', level=2)
+            ailo_text = ailo.get('ailo', 'N/A')
+            # Remove markdown bold syntax for Word (we'll apply Word formatting)
+            ailo_text_clean = re.sub(r'\*\*(.*?)\*\*', r'\1', ailo_text)
+            p = doc.add_paragraph(ailo_text_clean)
+            p.paragraph_format.left_indent = Inches(0.25)
+            
+            # Highlight the AI additions in the Word doc
+            # Split by markdown bold and apply formatting
+            parts = re.split(r'(\*\*.*?\*\*)', ailo.get('ailo', ''))
+            if len(parts) > 1:
+                p.clear()
+                for part in parts:
+                    if part.startswith('**') and part.endswith('**'):
+                        # Bold text
+                        run = p.add_run(part[2:-2])
+                        run.bold = True
+                        run.font.color.rgb = RGBColor(176, 36, 119)  # KSB Innovate color
+                    else:
+                        p.add_run(part)
+            
+            doc.add_paragraph()
+            
+            # Alignment explanation
+            doc.add_heading('🎯 Why & How: DEC Framework Alignment', level=2)
+            p = doc.add_paragraph(ailo.get('explanation', 'N/A'))
+            p.paragraph_format.left_indent = Inches(0.25)
+            doc.add_paragraph()
+            
+            # Assessment strategy
+            doc.add_heading('📋 Assessment Strategy', level=2)
+            assessment = ailo.get('assessment_strategy', {})
+            
+            # Method
+            p = doc.add_paragraph()
+            p.add_run('Method: ').bold = True
+            p.add_run(assessment.get('method', 'N/A'))
+            p.paragraph_format.left_indent = Inches(0.25)
+            
+            # Description
+            p = doc.add_paragraph()
+            p.add_run('Description: ').bold = True
+            p.add_run(assessment.get('description', 'N/A'))
+            p.paragraph_format.left_indent = Inches(0.25)
+            
+            # Rubric points
+            rubric_points = assessment.get('rubric_points', [])
+            if rubric_points:
+                p = doc.add_paragraph()
+                p.add_run('Key Assessment Criteria:').bold = True
+                p.paragraph_format.left_indent = Inches(0.25)
+                
+                for point in rubric_points:
+                    p = doc.add_paragraph(point, style='List Bullet')
+                    p.paragraph_format.left_indent = Inches(0.5)
+            
+            # Add separator between AILOs
+            if index < len(ailos):
+                doc.add_paragraph()
+                doc.add_paragraph('─' * 80)
+                doc.add_paragraph()
+        
+        # Save to BytesIO object
+        doc_io = BytesIO()
+        doc.save(doc_io)
+        doc_io.seek(0)
+        
+        # Generate filename
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        download_filename = f'AI_Learning_Outcomes_{timestamp}.docx'
+        
+        return send_file(
+            doc_io,
+            mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            as_attachment=True,
+            download_name=download_filename
+        )
+        
+    except Exception as e:
+        print(f"Error exporting to Word: {e}")
+        return jsonify({'error': f'Error creating Word document: {str(e)}'}), 500
 
 
 @app.route('/framework')

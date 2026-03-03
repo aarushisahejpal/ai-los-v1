@@ -391,6 +391,11 @@ async function generateAilosRequest() {
     }
 }
 
+function formatBoldMarkdown(text) {
+    // Convert **text** markdown syntax to <strong>text</strong> HTML
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
 function displayResults(ailosData) {
     if (!ailosData || ailosData.length === 0) {
         resultsContainer.innerHTML = '<p>No AILOs generated. Try adjusting your settings.</p>';
@@ -430,7 +435,7 @@ function displayResults(ailosData) {
             
             <div class="ai-outcome">
                 <div class="ai-outcome-label">✨ AI Learning Outcome (AILO)</div>
-                <p contenteditable="true" class="editable-ailo" data-index="${index}">${ailo.ailo}</p>
+                <p contenteditable="true" class="editable-ailo" data-index="${index}">${formatBoldMarkdown(ailo.ailo)}</p>
             </div>
             
             <div class="alignment-explanation">
@@ -525,63 +530,47 @@ function showSection(section) {
 }
 
 // Export results
-function exportResults() {
+async function exportResults() {
     if (!ailos || ailos.length === 0) {
         alert('No results to export. Please generate AILOs first.');
         return;
     }
     
-    const exportData = {
-        filename: uploadedFile ? uploadedFile.name : 'syllabus',
-        date: new Date().toISOString(),
-        configuration: {
-            ai_influence_percent: aiInfluencePercent,
-            selected_dimensions: selectedDimensions
-        },
-        validated_outcomes: validatedOutcomes,
-        validated_assessments: validatedAssessments,
-        ailos: ailos
-    };
-    
-    const dataStr = JSON.stringify(exportData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(dataBlob);
-    link.download = `ai-learning-outcomes-${Date.now()}.json`;
-    link.click();
-    
-    // Also create a readable text version
-    let textContent = `AI Learning Outcomes Report\n`;
-    textContent += `Generated: ${new Date().toLocaleString()}\n`;
-    textContent += `Original Syllabus: ${uploadedFile ? uploadedFile.name : 'N/A'}\n`;
-    textContent += `AI Influence: ${aiInfluencePercent}%\n`;
-    textContent += `Selected Dimensions: ${selectedDimensions.join(', ')}\n`;
-    textContent += `\n${'='.repeat(80)}\n\n`;
-    
-    ailos.forEach((ailo, index) => {
-        textContent += `${index + 1}. ${ailo.dec_dimension}\n`;
-        textContent += `${'='.repeat(80)}\n\n`;
-        textContent += `ORIGINAL LEARNING OUTCOME:\n${ailo.original_outcome}\n\n`;
-        textContent += `AI-ENHANCED LEARNING OUTCOME (AILO):\n${ailo.ailo}\n\n`;
-        textContent += `WHY & HOW - DEC FRAMEWORK ALIGNMENT:\n${ailo.explanation}\n\n`;
-        textContent += `ASSESSMENT STRATEGY:\n`;
-        textContent += `  Method: ${ailo.assessment_strategy.method}\n`;
-        textContent += `  Description: ${ailo.assessment_strategy.description}\n`;
-        if (ailo.assessment_strategy.rubric_points && ailo.assessment_strategy.rubric_points.length > 0) {
-            textContent += `  Rubric Points:\n`;
-            ailo.assessment_strategy.rubric_points.forEach((point, i) => {
-                textContent += `    ${i + 1}. ${point}\n`;
-            });
+    try {
+        const response = await fetch('/export-word', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ailos: ailos,
+                filename: uploadedFile ? uploadedFile.name : 'syllabus',
+                ai_influence_percent: aiInfluencePercent,
+                selected_dimensions: selectedDimensions
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Export failed');
         }
-        textContent += `\n${'-'.repeat(80)}\n\n`;
-    });
-    
-    const textBlob = new Blob([textContent], { type: 'text/plain' });
-    const textLink = document.createElement('a');
-    textLink.href = URL.createObjectURL(textBlob);
-    textLink.download = `ai-learning-outcomes-${Date.now()}.txt`;
-    textLink.click();
+        
+        // Get the blob from response
+        const blob = await response.blob();
+        
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `AI_Learning_Outcomes_${Date.now()}.docx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Error exporting document. Please try again.');
+    }
 }
 
 // Start over
